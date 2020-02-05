@@ -1,0 +1,11 @@
+{
+  "name": "stale-tickets-notifier",
+  "version": "1.0.0",
+  "description": "Stale Tickets Notifier",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bywatersolutions/stale-tickets-notifier.git"
+  },
+  "author": "Kyle M Hall",
+  "license": "GPL-3.0"
+}
