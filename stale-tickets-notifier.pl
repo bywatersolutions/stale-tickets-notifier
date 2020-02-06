@@ -4,8 +4,9 @@ use Modern::Perl;
 
 use Carp::Always;
 use Getopt::Long::Descriptive;
+use JSON;
+use LWP::UserAgent;
 use RT::Client::REST;
-use Slack::RTM::Bot;
 use Term::ANSIColor;
 use Try::Tiny;
 use YAML;
@@ -32,11 +33,6 @@ my ( $opt, $usage ) = describe_options(
         { required => 1, default => $ENV{RT_PW} }
     ],
     [],
-    [
-        "slack-bot-token=s",
-        "Slack Bot Token",
-        { required => 0, default => $ENV{SLACK_BOT_TOKEN} }
-    ],
     [],
     [ 'verbose|v+', "Print extra stuff" ],
     [ 'help|h', "Print usage message and exit", { shortcircuit => 1 } ],
@@ -46,10 +42,9 @@ print( $usage->text ), exit if $opt->help;
 
 my $config = YAML::LoadFile( $opt->config );
 
-my $verbose = $opt->verbose || 0;
+my $ua = LWP::UserAgent->new;
 
-my $slackbot = Slack::RTM::Bot->new( token => $opt->slack_bot_token );
-$slackbot->start_RTM( sub { } );
+my $verbose = $opt->verbose || 0;
 
 my $rt_url  = $opt->rt_url;
 my $rt_user = $opt->rt_username;
@@ -67,9 +62,9 @@ catch {
 };
 
 say colored( 'Finding stale tickets', 'green' ) if $verbose;
-foreach my $user ( @{ $config->{users}} ) {
-    say "Working on " . colored( $user->{slack_name}, 'cyan' )
-          if $verbose > 1;
+foreach my $user ( @{ $config->{users} } ) {
+    say "Working on " . colored( $user->{rt_owner}, 'cyan' )
+      if $verbose > 1;
 
     my $rt_query = qq{
         Queue = 'Support'
@@ -97,12 +92,29 @@ foreach my $user ( @{ $config->{users}} ) {
 
         say "  Ticket " . colored( $ticket_id, 'yellow' )
           if $verbose > 1;
-        $slackbot->say(
-            channel => '@' . $user->{slack_name},
-            text    => "STALE TICKET: "
-              . "<$rt_url/Ticket/Display.html?id=$ticket_id|$ticket_id: $ticket->{Subject}>"
-              . ", last updated $ticket->{Told}",
-        );
+
+        $ua->post(
+            $user->{slack_webhook},
+            Content_Type => 'application/json',
+            Content      => to_json(
+                {
+                    "text"        => "Stale Ticket!",
+                    "attachments" => [
+                        {
+                            "title"  => "<$rt_url/Ticket/Display.html?id=$ticket_id|$ticket_id: $ticket->{Subject}>",
+                            "fields" => [
+                                {
+                                    "title" => "Last touched",
+                                    "value" => "$ticket->{Told}",
+                                    "short" => JSON::true
+                                },
+                            ],
+                        },
+                    ]
+                }
+            ),
+        ) if $user->{slack_webhook};
+
     }
 }
 

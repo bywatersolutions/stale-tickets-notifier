@@ -8,17 +8,17 @@ First, you will need to create a yaml file of users to notify like so:
 ```yaml
 users:
   - rt_owner: kyle
-    slack_name: kylemhall
+    slack_webhook => 'https://hooks.slack.com/services/...'
     days_until_stale: 7
   - rt_owner: nick
-    slack_name: nick
+    slack_webhook => 'https://hooks.slack.com/services/...'
     days_until_stale: 14
   - rt_owner: lucas
-    slack_name: lucas
+    slack_webhook => 'https://hooks.slack.com/services/...'
     days_until_stale: 14
 ```
 `rt_owner` is the user login name in RT.
-`slack_name` is the slack "name", it is *not* the Slack display name.
+`slack_webhook` is the generated webhook for this user. Could be a channel or a DM.
 `days_until_stale` is the number of days since the last time the ticket was touched by anyone.
 
 In addition, you will need to fill in the script parameters:
@@ -29,10 +29,6 @@ stale-tickets-notifier.pl
 	--rt-username          RT username
 	--rt-password          RT password
 
-	--slack-bot-token      Slack Bot Token
-
-	-v --verbose           Print extra stuff
+	-v --verbose           Print extra stuff ( use multiple times for more verbosity )
 	-h --help              Print usage message and exit
 ```
-
-This script requires a Slack bot to be created that can access your Slack channels.

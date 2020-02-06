@@ -12,8 +12,9 @@ RUN apk add --no-cache \
       perl-app-cpanminus \
       perl-dev \
       perl-net-ssleay \
-      wget make
+      wget \
+      make
 
-RUN cpanm --installdeps . && rm -rf /root/.cpanm
+RUN cpanm --notest --installdeps . && rm -rf /root/.cpanm
 
 CMD ./stale-tickets-notifier.pl
