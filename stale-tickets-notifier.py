@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
 import os
-import pprint
 import rt
 import slack
 import ssl
 import yaml
-
-pp = pprint.PrettyPrinter(indent=4)
 
 rt_password = os.environ["RT_PW"]
 rt_url = os.environ["RT_URL"]
