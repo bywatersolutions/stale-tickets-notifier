@@ -1,2 +1,2 @@
 #!/bin/bash
-docker pull bywater/stale-tickets-notifier && docker run --env-file ~/.stale-tickets-notifier.env bywater/stale-tickets-notifier /app/rt-bugs--updater.pl "$@"
+docker pull quay.io/bywater/stale-tickets-notifier && docker run --env-file ~/.stale-tickets-notifier.env query.io/bywater/stale-tickets-notifier
