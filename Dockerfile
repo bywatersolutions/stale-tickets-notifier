@@ -1,20 +1,15 @@
-FROM alpine
+FROM python:3-alpine
 
 WORKDIR /app
 
-# Copy all files to workdir
-COPY . .
-
 RUN apk add --no-cache \
-      gcc \
-      musl-dev \
-      perl \
-      perl-app-cpanminus \
-      perl-dev \
-      perl-net-ssleay \
-      wget \
-      make
+    gcc \
+    musl-dev 
 
-RUN cpanm --notest --installdeps . && rm -rf /root/.cpanm
+# Copy all files to workdir
+COPY stale-tickets-notifier.py .
+COPY requirements.txt .
 
-CMD ./stale-tickets-notifier.pl
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ./stale-tickets-notifier.py

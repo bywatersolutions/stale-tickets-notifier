@@ -1,3 +1,4 @@
 .stale-tickets-notifier.env
+stale-tickets-notifier.env
 config.yml
 env.list
