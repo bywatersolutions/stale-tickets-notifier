@@ -54,22 +54,26 @@ for email, data in config["users"].items():
     )
 
     print(f"Found {len(results)} tickets for {email}")
+    attachments = []
     for r in results:
         print(f"  RT {r['numerical_id']}")
         title = f"<{rt_url}/Ticket/Display.html?id={r['numerical_id']}|{r['numerical_id']}: {r['Subject']}>"
+        attachments.append(
+            {
+                'title': title,
+                'fields': [
+                    {
+                        'title': 'Last touched',
+                        'value': r['Told'],
+                        'short': True,
+                    }
+                ]
+            }
+        )
+
+    if ( len(attachments) ):
         r = bot.chat_postMessage(
             channel=my_users[email],
-            text=f"Stale Ticket! RT {r['numerical_id']}",
-            attachments=[
-                {
-                    'title': title,
-                    'fields': [
-                        {
-                            'title': 'Last touched',
-                            'value': r['Told'],
-                            'short': True,
-                        }
-                    ]
-                }
-            ]
+            text=f"Stale Tickets!",
+            attachments=attachments,
         )
