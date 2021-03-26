@@ -5,7 +5,7 @@ certifi==2019.11.28
 chardet==3.0.4
 idna==2.8
 multidict==4.7.4
-PyYAML==5.3
+PyYAML==5.4
 requests==2.22.0
 rt==1.0.12
 six==1.14.0
