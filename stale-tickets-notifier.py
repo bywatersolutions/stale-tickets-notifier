@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from urllib import request
 import os
 import rt
 import slack
@@ -11,6 +12,7 @@ rt_url = os.environ["RT_URL"]
 rt_username = os.environ["RT_USER"]
 slack_token = os.environ["SLACK_API_TOKEN"]
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
+conf_url = os.environ["CONF_URL"]
 
 ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
@@ -31,6 +33,9 @@ tracker.login()
 
 with open(r'config.yml') as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
+
+    y = urllib.request.urlopen(conf_url)
+    config = yaml.load(y, Loader=yaml.FullLoader)
 
 # Build dict of email => id
 users = client.users_list()
